@@ -1,0 +1,21 @@
+# Render Blueprint configuration
+# https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: linkedin-post-generator
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GOOGLE_API_KEY
+        value: AXXX
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.11"
+      - key: ENVIRONMENT
+        value: production
+    healthCheckPath: /health
+    autoDeploy: true
+
