@@ -3,213 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkedIn Post Generator | AI-Powered Content Creation</title>
+    <title>LinkedIn Post Generator | AI-Powered Content</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="bg-pattern"></div>
-    <div class="bg-gradient"></div>
-    
-    <div class="app-container">
+    <div class="app-wrapper">
         <!-- Header -->
         <header class="header">
-            <div class="logo">
-                <div class="logo-icon">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-                    </svg>
+            <div class="header-inner">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-title">Post Generator</span>
+                        <span class="logo-subtitle">AI-Powered Content</span>
+                    </div>
                 </div>
-                <div class="logo-text">
-                    <span class="logo-title">Post Generator</span>
-                    <span class="logo-subtitle">AI-Powered LinkedIn Content</span>
+                <div class="header-badge">
+                    <span class="badge-dot"></span>
+                    Gemini 2.5 Flash
                 </div>
-            </div>
-            <div class="header-badge">
-                <span class="badge-dot"></span>
-                Powered by Gemini 2.5
             </div>
         </header>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Input Section -->
-            <section class="input-section" id="inputSection">
-                <div class="section-header">
-                    <h1>Create Engaging LinkedIn Posts</h1>
-                    <p>Enter your professional field and let AI research trending topics and craft compelling posts.</p>
-                </div>
-                
-                <form id="generateForm" class="generate-form">
-                    <div class="form-group">
-                        <label for="fieldInput">Professional Field</label>
-                        <input 
-                            type="text" 
-                            id="fieldInput" 
-                            placeholder="e.g., Artificial Intelligence, Digital Marketing, Fintech..."
-                            required
-                        >
-                        <span class="input-hint">Be specific for better results</span>
+            <div class="content-wrapper">
+                <!-- Input Section - Always visible -->
+                <section class="input-section" id="inputSection">
+                    <div class="section-title">
+                        <h1>Create LinkedIn Posts</h1>
+                        <p>Enter your field and let AI research trends and craft posts.</p>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="contextInput">Additional Context <span class="optional">(Optional)</span></label>
-                        <textarea 
-                            id="contextInput" 
-                            placeholder="Add any specific angles, target audience, or themes you'd like to focus on..."
-                            rows="3"
-                        ></textarea>
-                    </div>
-                    
-                    <button type="submit" class="btn-generate" id="generateBtn">
-                        <span class="btn-content">
-                            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                                <path d="M2 17l10 5 10-5"/>
-                                <path d="M2 12l10 5 10-5"/>
-                            </svg>
-                            Generate Posts
-                        </span>
-                        <span class="btn-loader">
-                            <span class="loader-spinner"></span>
-                            Processing...
-                        </span>
-                    </button>
-                </form>
-            </section>
+                    <form id="generateForm" class="generate-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="fieldInput">Professional Field</label>
+                                <input 
+                                    type="text" 
+                                    id="fieldInput" 
+                                    placeholder="e.g., Artificial Intelligence, Digital Marketing..."
+                                    required
+                                >
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contextInput">Additional Context <span class="optional">(optional)</span></label>
+                            <textarea 
+                                id="contextInput" 
+                                placeholder="Specific angles, target audience, or themes..."
+                                rows="2"
+                            ></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-generate" id="generateBtn">
+                            <span class="btn-content">
+                                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                </svg>
+                                Generate Posts
+                            </span>
+                            <span class="btn-loader">
+                                <span class="loader-spinner"></span>
+                                Generating...
+                            </span>
+                        </button>
+                    </form>
 
-            <!-- Processing Section -->
-            <section class="processing-section hidden" id="processingSection">
-                <div class="processing-header">
-                    <h2>Generating Your Posts</h2>
-                    <p>Our AI agent is working through multiple stages...</p>
-                </div>
-                
-                <!-- Pipeline Visualization -->
-                <div class="pipeline">
-                    <div class="pipeline-stage" data-stage="trending">
-                        <div class="stage-indicator">
-                            <div class="stage-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <path d="m21 21-4.35-4.35"/>
-                                </svg>
-                            </div>
-                            <div class="stage-line"></div>
+                    <!-- Processing Sub-container - Shows during generation -->
+                    <div class="processing-container hidden" id="processingContainer">
+                        <div class="processing-header">
+                            <h3>
+                                <span class="processing-icon"></span>
+                                Generation Progress
+                            </h3>
                         </div>
-                        <div class="stage-content">
-                            <h3>Identifying Trends</h3>
-                            <p class="stage-description">Searching for trending topics in your field</p>
-                            <div class="stage-output"></div>
+                        
+                        <!-- Pipeline Steps -->
+                        <div class="pipeline-steps">
+                            <div class="pipeline-step" data-stage="trending">
+                                <div class="step-status">
+                                    <div class="step-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <circle cx="11" cy="11" r="8"/>
+                                            <path d="m21 21-4.35-4.35"/>
+                                        </svg>
+                                        <div class="step-check">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                <polyline points="20 6 9 17 4 12"/>
+                                            </svg>
+                                        </div>
+                                        <div class="step-spinner"></div>
+                                    </div>
+                                </div>
+                                <div class="step-info">
+                                    <span class="step-title">Identifying Trends</span>
+                                    <span class="step-desc">Searching for trending topics</span>
+                                    <div class="step-output"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="pipeline-step" data-stage="research">
+                                <div class="step-status">
+                                    <div class="step-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                        </svg>
+                                        <div class="step-check">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                <polyline points="20 6 9 17 4 12"/>
+                                            </svg>
+                                        </div>
+                                        <div class="step-spinner"></div>
+                                    </div>
+                                </div>
+                                <div class="step-info">
+                                    <span class="step-title">Deep Research</span>
+                                    <span class="step-desc">Compiling research report</span>
+                                    <div class="step-output"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="pipeline-step" data-stage="generation">
+                                <div class="step-status">
+                                    <div class="step-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                                            <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                                            <path d="M2 2l7.586 7.586"/>
+                                            <circle cx="11" cy="11" r="2"/>
+                                        </svg>
+                                        <div class="step-check">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                                <polyline points="20 6 9 17 4 12"/>
+                                            </svg>
+                                        </div>
+                                        <div class="step-spinner"></div>
+                                    </div>
+                                </div>
+                                <div class="step-info">
+                                    <span class="step-title">Crafting Posts</span>
+                                    <span class="step-desc">Generating post variations</span>
+                                    <div class="step-output"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Live Log (Collapsible) -->
+                        <div class="live-log">
+                            <button class="log-toggle-btn" id="logToggle">
+                                <span class="log-toggle-text">
+                                    <span class="pulse-dot"></span>
+                                    Live Log
+                                </span>
+                                <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"/>
+                                </svg>
+                            </button>
+                            <div class="log-content collapsed" id="logContent">
+                                <div class="log-entries" id="logEntries"></div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="pipeline-stage" data-stage="research">
-                        <div class="stage-indicator">
-                            <div class="stage-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                                </svg>
-                            </div>
-                            <div class="stage-line"></div>
+                </section>
+
+                <!-- Results Section -->
+                <section class="results-section hidden" id="resultsSection">
+                    <div class="results-header">
+                        <div class="results-title">
+                            <h2>Generated Posts</h2>
+                            <p>Review, refine, and copy your posts</p>
                         </div>
-                        <div class="stage-content">
-                            <h3>Deep Research</h3>
-                            <p class="stage-description">Compiling comprehensive research report</p>
-                            <div class="stage-output"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="pipeline-stage" data-stage="generation">
-                        <div class="stage-indicator">
-                            <div class="stage-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M12 19l7-7 3 3-7 7-3-3z"/>
-                                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
-                                    <path d="M2 2l7.586 7.586"/>
-                                    <circle cx="11" cy="11" r="2"/>
-                                </svg>
-                            </div>
-                        </div>
-                        <div class="stage-content">
-                            <h3>Crafting Posts</h3>
-                            <p class="stage-description">Generating multiple LinkedIn post variations</p>
-                            <div class="stage-output"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Live Log -->
-                <div class="live-log">
-                    <div class="log-header">
-                        <span class="log-title">
-                            <span class="pulse-dot"></span>
-                            Live Execution Log
-                        </span>
-                        <button class="log-toggle" id="logToggle">
+                        <button class="btn-outline" id="startOverBtn">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                                <path d="M21 3v5h-5"/>
+                                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                                <path d="M8 16H3v5"/>
+                            </svg>
+                            Start New
+                        </button>
+                    </div>
+                    
+                    <!-- Research Summary -->
+                    <div class="research-panel">
+                        <button class="research-toggle-btn" id="toggleResearch">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            View Research Summary
+                            <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="6 9 12 15 18 9"/>
                             </svg>
                         </button>
-                    </div>
-                    <div class="log-content" id="logContent">
-                        <div class="log-entries" id="logEntries"></div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Results Section -->
-            <section class="results-section hidden" id="resultsSection">
-                <div class="results-header">
-                    <h2>Your Generated Posts</h2>
-                    <p>Review, refine, and copy your LinkedIn posts</p>
-                    <button class="btn-secondary" id="startOverBtn">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-                            <path d="M21 3v5h-5"/>
-                            <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-                            <path d="M8 16H3v5"/>
-                        </svg>
-                        Start New
-                    </button>
-                </div>
-                
-                <!-- Research Summary Toggle -->
-                <div class="research-toggle">
-                    <button class="toggle-btn" id="toggleResearch">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-                        </svg>
-                        View Research Summary
-                        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"/>
-                        </svg>
-                    </button>
-                    <div class="research-content hidden" id="researchContent">
-                        <div class="research-section">
-                            <h4>Trending Topics</h4>
-                            <div id="trendingTopics" class="research-text"></div>
-                        </div>
-                        <div class="research-section">
-                            <h4>Research Report</h4>
-                            <div id="researchReport" class="research-text"></div>
+                        <div class="research-content hidden" id="researchContent">
+                            <div class="research-block">
+                                <h4>Trending Topics</h4>
+                                <div id="trendingTopics" class="research-text"></div>
+                            </div>
+                            <div class="research-block">
+                                <h4>Research Report</h4>
+                                <div id="researchReport" class="research-text"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Posts Grid -->
-                <div class="posts-grid" id="postsGrid"></div>
-            </section>
+                    
+                    <!-- Posts -->
+                    <div class="posts-list" id="postsGrid"></div>
+                </section>
+            </div>
         </main>
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Built with LangChain & Gemini 2.5 Flash • Deployable on Render</p>
+            <p>Built with LangChain & Gemini 2.5 Flash</p>
         </footer>
     </div>
 
@@ -217,7 +234,7 @@
     <div class="modal-overlay hidden" id="refineModal">
         <div class="modal">
             <div class="modal-header">
-                <h3>Refine Your Post</h3>
+                <h3>Refine Post</h3>
                 <button class="modal-close" id="closeModal">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"/>
@@ -234,25 +251,24 @@
                     <label for="feedbackInput">Your Feedback</label>
                     <textarea 
                         id="feedbackInput" 
-                        placeholder="e.g., Make it more casual, add more statistics, focus on the business impact..."
-                        rows="4"
+                        placeholder="e.g., Make it more casual, add statistics..."
+                        rows="3"
                     ></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" id="cancelRefine">Cancel</button>
+                <button class="btn-cancel" id="cancelRefine">Cancel</button>
                 <button class="btn-primary" id="submitRefine">
-                    <span class="btn-content">Refine Post</span>
+                    <span class="btn-content">Refine</span>
                     <span class="btn-loader">
                         <span class="loader-spinner"></span>
-                        Refining...
                     </span>
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div class="toast hidden" id="toast">
         <div class="toast-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -265,4 +281,3 @@
     <script src="/static/app.js"></script>
 </body>
 </html>
-

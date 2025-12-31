@@ -15,7 +15,7 @@ class LinkedInPostGenerator {
     initializeElements() {
         // Sections
         this.inputSection = document.getElementById('inputSection');
-        this.processingSection = document.getElementById('processingSection');
+        this.processingContainer = document.getElementById('processingContainer');
         this.resultsSection = document.getElementById('resultsSection');
         
         // Form elements
@@ -91,8 +91,8 @@ class LinkedInPostGenerator {
             return;
         }
         
-        // Show processing section
-        this.showSection('processing');
+        // Show processing container in same page
+        this.showProcessing();
         this.resetProcessingUI();
         this.setLoading(true);
         
@@ -171,13 +171,13 @@ class LinkedInPostGenerator {
         this.addLogEntry(event.message, 'info');
         
         // Update pipeline visualization
-        const stages = document.querySelectorAll('.pipeline-stage');
-        stages.forEach(stageEl => {
-            const stageName = stageEl.dataset.stage;
+        const steps = document.querySelectorAll('.pipeline-step');
+        steps.forEach(stepEl => {
+            const stageName = stepEl.dataset.stage;
             
             if (stageName === stage) {
-                stageEl.classList.add('active');
-                stageEl.classList.remove('completed');
+                stepEl.classList.add('active');
+                stepEl.classList.remove('completed');
             }
         });
     }
@@ -187,19 +187,19 @@ class LinkedInPostGenerator {
         this.addLogEntry(event.message, 'success');
         
         // Mark stage as completed
-        const stageEl = document.querySelector(`.pipeline-stage[data-stage="${stage}"]`);
-        if (stageEl) {
-            stageEl.classList.remove('active');
-            stageEl.classList.add('completed');
+        const stepEl = document.querySelector(`.pipeline-step[data-stage="${stage}"]`);
+        if (stepEl) {
+            stepEl.classList.remove('active');
+            stepEl.classList.add('completed');
             
             // Show output preview
-            const outputEl = stageEl.querySelector('.stage-output');
+            const outputEl = stepEl.querySelector('.step-output');
             if (outputEl && event.data) {
                 let preview = '';
                 if (event.data.topics) {
-                    preview = event.data.topics.substring(0, 150) + '...';
+                    preview = event.data.topics.substring(0, 100) + '...';
                 } else if (event.data.report) {
-                    preview = event.data.report.substring(0, 150) + '...';
+                    preview = event.data.report.substring(0, 100) + '...';
                 } else if (event.data.posts) {
                     preview = `Generated ${event.data.posts.length} post variations`;
                 }
@@ -230,7 +230,15 @@ class LinkedInPostGenerator {
         // Short delay before showing results
         setTimeout(() => {
             this.showResults();
-        }, 800);
+        }, 600);
+    }
+    
+    showProcessing() {
+        this.processingContainer.classList.remove('hidden');
+        this.resultsSection.classList.add('hidden');
+        
+        // Scroll to processing container
+        this.processingContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     
     showResults() {
@@ -241,8 +249,15 @@ class LinkedInPostGenerator {
         // Render posts
         this.renderPosts();
         
-        // Show results section
-        this.showSection('results');
+        // Hide processing completely and clear log entries
+        this.processingContainer.classList.add('hidden');
+        this.logEntries.innerHTML = '';
+        
+        // Show results
+        this.resultsSection.classList.remove('hidden');
+        
+        // Scroll to results
+        this.resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     
     renderPosts() {
@@ -372,10 +387,7 @@ class LinkedInPostGenerator {
     
     toggleLog() {
         this.logContent.classList.toggle('collapsed');
-        const icon = this.logToggle.querySelector('svg');
-        icon.style.transform = this.logContent.classList.contains('collapsed') 
-            ? 'rotate(180deg)' 
-            : 'rotate(0deg)';
+        this.logToggle.classList.toggle('expanded');
     }
     
     toggleResearchPanel() {
@@ -383,31 +395,17 @@ class LinkedInPostGenerator {
         this.toggleResearch.classList.toggle('expanded');
     }
     
-    showSection(section) {
-        this.inputSection.classList.add('hidden');
-        this.processingSection.classList.add('hidden');
-        this.resultsSection.classList.add('hidden');
-        
-        switch (section) {
-            case 'input':
-                this.inputSection.classList.remove('hidden');
-                break;
-            case 'processing':
-                this.processingSection.classList.remove('hidden');
-                break;
-            case 'results':
-                this.resultsSection.classList.remove('hidden');
-                break;
-        }
-    }
-    
     setLoading(loading) {
         if (loading) {
             this.generateBtn.classList.add('loading');
             this.generateBtn.disabled = true;
+            this.fieldInput.disabled = true;
+            this.contextInput.disabled = true;
         } else {
             this.generateBtn.classList.remove('loading');
             this.generateBtn.disabled = false;
+            this.fieldInput.disabled = false;
+            this.contextInput.disabled = false;
         }
     }
     
@@ -415,19 +413,20 @@ class LinkedInPostGenerator {
         // Clear log entries
         this.logEntries.innerHTML = '';
         
-        // Reset pipeline stages
-        const stages = document.querySelectorAll('.pipeline-stage');
-        stages.forEach(stage => {
-            stage.classList.remove('active', 'completed');
-            const output = stage.querySelector('.stage-output');
+        // Reset pipeline steps
+        const steps = document.querySelectorAll('.pipeline-step');
+        steps.forEach(step => {
+            step.classList.remove('active', 'completed');
+            const output = step.querySelector('.step-output');
             if (output) {
                 output.classList.remove('visible');
                 output.textContent = '';
             }
         });
         
-        // Ensure log is expanded
-        this.logContent.classList.remove('collapsed');
+        // Collapse log by default
+        this.logContent.classList.add('collapsed');
+        this.logToggle.classList.remove('expanded');
     }
     
     startOver() {
@@ -436,11 +435,19 @@ class LinkedInPostGenerator {
         this.fieldInput.value = '';
         this.contextInput.value = '';
         
+        // Hide sections
+        this.processingContainer.classList.add('hidden');
+        this.resultsSection.classList.add('hidden');
+        
         // Hide research content
         this.researchContent.classList.add('hidden');
         this.toggleResearch.classList.remove('expanded');
         
-        this.showSection('input');
+        // Scroll to top
+        this.inputSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Focus input
+        this.fieldInput.focus();
     }
     
     showToast(message, type = 'success') {
@@ -476,4 +483,3 @@ class LinkedInPostGenerator {
 document.addEventListener('DOMContentLoaded', () => {
     window.app = new LinkedInPostGenerator();
 });
-
