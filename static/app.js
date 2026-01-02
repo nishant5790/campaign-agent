@@ -220,11 +220,16 @@ class LinkedInPostGenerator {
         this.addLogEntry(event.message, 'success');
         this.setLoading(false);
         
-        // Store final data
+        // Store final data only if provided (backend optimization might omit this)
         if (event.data) {
-            this.researchData.topics = event.data.trending_topics;
-            this.researchData.report = event.data.research_report;
-            this.currentPosts = event.data.posts;
+            if (event.data.trending_topics) this.researchData.topics = event.data.trending_topics;
+            if (event.data.research_report) this.researchData.report = event.data.research_report;
+            if (event.data.posts) this.currentPosts = event.data.posts;
+        }
+        
+        // Ensure we have data to show
+        if (!this.researchData.topics || !this.researchData.report || this.currentPosts.length === 0) {
+            console.warn('Completed with missing data, relying on cached state');
         }
         
         // Short delay before showing results

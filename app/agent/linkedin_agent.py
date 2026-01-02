@@ -132,7 +132,7 @@ Ensure the refined post:
             response = await asyncio.to_thread(
                 self.genai_client.models.generate_content,
                 model="gemini-2.0-flash",
-                contents=f"Search for the latest information about: {query}. Provide detailed, factual information with recent developments.",
+                contents=f"Search for the latest information about: {query}. Provide concise, factual information with recent developments.",
                 config=types.GenerateContentConfig(
                     tools=[types.Tool(google_search=types.GoogleSearch())],
                 )
@@ -226,14 +226,17 @@ Ensure the refined post:
                 f"{field} case studies success stories"
             ]
             
-            research_data = []
+            # Parallelize search requests
+            search_tasks = [self._search_with_gemini(q) for q in research_queries]
+            
             for i, query in enumerate(research_queries):
                 yield {
                     "type": "progress",
                     "message": f"Research query {i+1}/3: {query}"
                 }
-                result = await self._search_with_gemini(query)
-                research_data.append(result)
+            
+            research_results = await asyncio.gather(*search_tasks)
+            research_data = list(research_results)
             
             yield {
                 "type": "progress",
@@ -242,12 +245,20 @@ Ensure the refined post:
             
             # Compile research report
             combined_research = "\n\n".join(research_data)
+            
+            # Clear individual results to save memory
+            del research_results
+            del research_data
+            
             research_chain = self.research_prompt | self.llm | StrOutputParser()
             research_report = await research_chain.ainvoke({
                 "topic": trending_topics.split('\n')[0] if trending_topics else field,
                 "field": field,
                 "context": f"{additional_context}\n\nResearch findings:\n{combined_research}"
             })
+            
+            # Clear large combined content
+            del combined_research
             
             yield {
                 "type": "result",
@@ -284,15 +295,11 @@ Ensure the refined post:
                 "data": {"posts": post_list, "raw_posts": posts}
             }
             
-            # Final completion
+            # Final completion - Lightweight event
             yield {
                 "type": "complete",
                 "message": "🎉 All done! Review your posts below.",
-                "data": {
-                    "trending_topics": trending_topics,
-                    "research_report": research_report,
-                    "posts": post_list
-                }
+                "data": {} # Data already sent in previous events to save bandwidth
             }
             
         except Exception as e:
