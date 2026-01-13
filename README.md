@@ -15,6 +15,10 @@ AI-powered LinkedIn post generator using LangChain and Google Gemini 2.5 Flash w
 - 📊 **Real-time Processing**: Watch the AI agent work through each stage with live updates
 - 🎨 **Professional UI**: Clean, modern interface with blue/white/gray color scheme
 
+## Documentation
+
+For detailed architecture documentation, see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
 ## Tech Stack
 
 - **Backend**: FastAPI + LangChain + Google Generative AI
@@ -22,12 +26,12 @@ AI-powered LinkedIn post generator using LangChain and Google Gemini 2.5 Flash w
 - **AI Model**: Gemini 2.5 Flash with Google Search grounding
 - **Deployment**: Render.com ready
 
-## Local Development
+## Quick Start
 
 ### Prerequisites
 
 - Python 3.11+
-- [uv](https://github.com/astral-sh/uv) package manager
+- [uv](https://github.com/astral-sh/uv) package manager (recommended) or pip
 - Google AI API Key ([Get one here](https://makersuite.google.com/app/apikey))
 
 ### Setup
@@ -35,18 +39,27 @@ AI-powered LinkedIn post generator using LangChain and Google Gemini 2.5 Flash w
 1. Clone the repository:
 ```bash
 git clone <your-repo-url>
-cd linkedin-post-generator
+cd campaign-agent
 ```
 
-2. Create virtual environment with uv:
+2. Create virtual environment:
 ```bash
+# Using uv (recommended)
 uv venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Or using standard venv
+python -m venv .venv
+source .venv/bin/activate
 ```
 
 3. Install dependencies:
 ```bash
+# Using uv
 uv pip install -r requirements.txt
+
+# Or using pip
+pip install -r requirements.txt
 ```
 
 4. Set up environment variables:
@@ -62,51 +75,58 @@ python -m app.main
 
 6. Open http://localhost:8000 in your browser
 
-## Deployment on Render.com
+## Project Structure
 
-### Option 1: Using Render Blueprint (Recommended)
+```
+campaign-agent/
+├── docs/
+│   └── ARCHITECTURE.md         # Detailed architecture documentation
+├── app/
+│   ├── __init__.py
+│   ├── main.py                 # FastAPI application entry point
+│   └── agent/
+│       ├── __init__.py         # Package exports
+│       ├── linkedin_agent.py   # Main agent orchestrator
+│       ├── resources/          # Configuration and prompts
+│       │   ├── __init__.py
+│       │   ├── config.py       # Configuration settings
+│       │   └── prompts.yml     # AI prompts (editable)
+│       └── utils/              # Utility modules
+│           ├── __init__.py
+│           ├── prompt_loader.py # YAML prompt loading
+│           ├── post_parser.py   # Post parsing logic
+│           └── models.py        # Data models
+├── static/
+│   ├── index.html              # Frontend HTML
+│   ├── styles.css              # CSS styles
+│   └── app.js                  # Frontend JavaScript
+├── requirements.txt            # Python dependencies
+├── render.yaml                 # Render deployment config
+├── Procfile                    # Process file
+└── README.md
+```
 
-1. Fork this repository to your GitHub account
+## Configuration
 
-2. Go to [Render Dashboard](https://dashboard.render.com/)
+### Customizing Prompts
 
-3. Click "New" → "Blueprint"
+Edit `app/agent/resources/prompts.yml` to customize the AI's behavior:
 
-4. Connect your GitHub repository
+```yaml
+trending_topics:
+  system: |
+    Your custom system prompt...
+  human: |
+    Your custom human message with {variables}...
+```
 
-5. Render will automatically detect the `render.yaml` configuration
+### Customizing Settings
 
-6. Add your environment variables:
-   - `GOOGLE_API_KEY`: Your Google AI API key
-
-7. Click "Apply" to deploy
-
-### Option 2: Manual Deployment
-
-1. Go to [Render Dashboard](https://dashboard.render.com/)
-
-2. Click "New" → "Web Service"
-
-3. Connect your repository
-
-4. Configure the service:
-   - **Environment**: Python 3
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-
-5. Add environment variables:
-   - `GOOGLE_API_KEY`: Your Google AI API key
-   - `ENVIRONMENT`: `production`
-
-6. Deploy!
-
-## Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `GOOGLE_API_KEY` | Google AI API key for Gemini | Yes |
-| `ENVIRONMENT` | `development` or `production` | No |
-| `PORT` | Server port (default: 8000) | No |
+Modify `app/agent/resources/config.py` to change:
+- Model names and temperatures
+- Search query templates
+- Post parsing patterns
+- Validation constants
 
 ## API Endpoints
 
@@ -136,32 +156,45 @@ python -m app.main
    - Refine posts with specific feedback
    - Download or share directly
 
-## Project Structure
+## Deployment on Render.com
 
-```
-linkedin-post-generator/
-├── app/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI application
-│   └── agent/
-│       ├── __init__.py
-│       └── linkedin_agent.py # LangChain agent
-├── static/
-│   ├── index.html           # Frontend HTML
-│   ├── styles.css           # CSS styles
-│   └── app.js               # Frontend JavaScript
-├── pyproject.toml           # Python project config
-├── requirements.txt         # Dependencies
-├── render.yaml              # Render deployment config
-├── Procfile                 # Process file
-└── README.md
-```
+### Option 1: Using Render Blueprint (Recommended)
 
-## License
+1. Fork this repository to your GitHub account
+2. Go to [Render Dashboard](https://dashboard.render.com/)
+3. Click "New" → "Blueprint"
+4. Connect your GitHub repository
+5. Render will automatically detect the `render.yaml` configuration
+6. Add your environment variables:
+   - `GOOGLE_API_KEY`: Your Google AI API key
+7. Click "Apply" to deploy
 
-MIT License - feel free to use this project for personal or commercial purposes.
+### Option 2: Manual Deployment
+
+1. Go to [Render Dashboard](https://dashboard.render.com/)
+2. Click "New" → "Web Service"
+3. Connect your repository
+4. Configure the service:
+   - **Environment**: Python 3
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+5. Add environment variables:
+   - `GOOGLE_API_KEY`: Your Google AI API key
+   - `ENVIRONMENT`: `production`
+6. Deploy!
+
+## Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `GOOGLE_API_KEY` | Google AI API key for Gemini | Yes |
+| `ENVIRONMENT` | `development` or `production` | No |
+| `PORT` | Server port (default: 8000) | No |
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## License
+
+MIT License - feel free to use this project for personal or commercial purposes.
