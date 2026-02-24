@@ -89,6 +89,8 @@ class EventType:
 # Stage identifiers
 class Stage:
     """Constants for agent processing stages."""
+    CHATTING = "chatting"
+    PLAN_PENDING = "plan_pending"
     TRENDING = "trending"
     RESEARCH = "research"
     GENERATION = "generation"

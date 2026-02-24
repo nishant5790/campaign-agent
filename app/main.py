@@ -17,6 +17,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 
 from app.agent.linkedin_agent import LinkedInPostAgent
+from app.agent.chat_session import session_manager
 
 load_dotenv()
 
@@ -43,7 +44,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="LinkedIn Post Generator",
     description="AI-powered LinkedIn post generator using Langchain and Gemini",
-    version="1.0.0",
+    version="2.0.0",
     lifespan=lifespan,
 )
 
@@ -60,10 +61,17 @@ app.add_middleware(
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
-class GenerateRequest(BaseModel):
-    """Request model for post generation"""
-    field: str
-    additional_context: str = ""
+# ─── Request Models ─────────────────────────────────────────────
+
+class ChatRequest(BaseModel):
+    """Request model for chat messages"""
+    session_id: str
+    message: str
+
+
+class ApprovePlanRequest(BaseModel):
+    """Request model for plan approval"""
+    session_id: str
 
 
 class RefineRequest(BaseModel):
@@ -71,6 +79,8 @@ class RefineRequest(BaseModel):
     post_content: str
     feedback: str
 
+
+# ─── Pages ───────────────────────────────────────────────────────
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
@@ -84,29 +94,83 @@ async def health_check():
     return {"status": "healthy", "service": "linkedin-post-generator"}
 
 
-async def generate_stream(field: str, additional_context: str) -> AsyncGenerator[str, None]:
-    """Stream generation events using SSE"""
-    try:
-        async for event in agent.generate_posts_stream(field, additional_context):
-            yield json.dumps(event)
-    except Exception as e:
-        yield json.dumps({
-            "type": "error",
-            "message": str(e)
-        })
+# ─── Session Management ─────────────────────────────────────────
+
+@app.post("/api/sessions")
+async def create_session():
+    """Create a new chat session"""
+    session = session_manager.create_session()
+    return {
+        "success": True,
+        "session_id": session.session_id,
+        "status": session.status,
+    }
 
 
-@app.post("/api/generate")
-async def generate_posts(request: GenerateRequest):
-    """Generate LinkedIn posts using SSE streaming"""
+# ─── Chat ────────────────────────────────────────────────────────
+
+@app.post("/api/chat")
+async def chat_message(request: ChatRequest):
+    """
+    Send a chat message and receive AI response.
+    
+    The AI will ask clarifying questions and eventually produce
+    a research plan when it has enough context.
+    """
     if not agent:
         raise HTTPException(status_code=500, detail="Agent not initialized")
-    
-    return EventSourceResponse(
-        generate_stream(request.field, request.additional_context),
-        media_type="text/event-stream"
-    )
 
+    session = session_manager.get_session(request.session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    result = await agent.chat(session, request.message)
+
+    return {
+        "success": True,
+        "response": result["response"],
+        "plan": result.get("plan"),
+        "status": result["status"],
+        "session": session.to_dict(),
+    }
+
+
+# ─── Plan Approval & Generation ─────────────────────────────────
+
+@app.post("/api/approve-plan")
+async def approve_plan(request: ApprovePlanRequest):
+    """
+    Approve the generated plan and start post generation via SSE.
+    """
+    if not agent:
+        raise HTTPException(status_code=500, detail="Agent not initialized")
+
+    session = session_manager.get_session(request.session_id)
+    if not session:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    if session.status != "plan_pending":
+        raise HTTPException(
+            status_code=400,
+            detail=f"Session is not awaiting plan approval (status: {session.status})"
+        )
+
+    session.approve_plan()
+
+    async def stream() -> AsyncGenerator[str, None]:
+        try:
+            async for event in agent.generate_posts_from_session(session):
+                yield json.dumps(event)
+        except Exception as e:
+            yield json.dumps({
+                "type": "error",
+                "message": str(e)
+            })
+
+    return EventSourceResponse(stream(), media_type="text/event-stream")
+
+
+# ─── Post Refinement ────────────────────────────────────────────
 
 @app.post("/api/refine")
 async def refine_post(request: RefineRequest):
@@ -121,21 +185,7 @@ async def refine_post(request: RefineRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.get("/api/trending/{field}")
-async def get_trending_topics(field: str):
-    """Get trending topics for a specific field"""
-    if not agent:
-        raise HTTPException(status_code=500, detail="Agent not initialized")
-    
-    try:
-        topics = await agent.get_trending_topics(field)
-        return {"success": True, "topics": topics}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
 if __name__ == "__main__":
     import uvicorn
     port = int(os.getenv("PORT", 8000))
     uvicorn.run("app.main:app", host="0.0.0.0", port=port, reload=True)
-
